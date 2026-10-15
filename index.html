@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schbang × Shopify insights</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --ink:#121212; --ink-2:#333333; --muted:#838383; --line:#e8e8e8;
+  --sand:#dfdad5; --sand-2:#f4f1ee; --panel:#ffffff;
+  --orange:#f2552c; --pink:#f0a6d8; --cyan:#45c4dc; --yellow:#f3e33a;
+  --live:#1f9d55; --radius:18px;
+  --grad:linear-gradient(90deg,#a7a39d 0%,#f2552c 30%,#f0a6d8 62%,#f3e33a 100%);
+}
+:root[data-theme="dark"]{
+  --bg:#0f0f0f; --ink:#f5f3f0; --ink-2:#d9d6d2; --muted:#9a968f; --line:#2a2a2a;
+  --sand:#3a3632; --sand-2:#1b1a19; --panel:#161616;
+}
+*{box-sizing:border-box}
+html,body{margin:0;font-family:Sora,system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+header{position:sticky;top:0;z-index:20;height:68px;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header .wrap{height:100%;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-weight:700;font-size:20px;letter-spacing:-.02em;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.logo b{letter-spacing:-.04em}.logo span{font-weight:500;color:var(--muted)}
+.pill-grad{width:42px;height:10px;border-radius:999px;background:var(--grad)}
+.right{display:flex;gap:10px;align-items:center}
+.icon-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;font-size:16px}
+/* dropdown */
+.dd{position:relative}
+.dd-btn{min-width:190px;text-align:left;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:6px 36px 6px 14px;cursor:pointer;font-family:inherit;position:relative;transition:border-color .15s,box-shadow .15s}
+.dd-btn small{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.dd-btn strong{font-size:14px;font-weight:600}
+.dd-btn:after{content:"";position:absolute;right:14px;top:50%;width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:translateY(-70%) rotate(45deg);transition:transform .2s}
+.dd.open .dd-btn:after{transform:translateY(-30%) rotate(225deg)}
+.dd-btn:hover,.dd.open .dd-btn{border-color:var(--ink);box-shadow:0 0 0 3px var(--sand)}
+.dd-menu{position:absolute;right:0;top:calc(100% + 8px);min-width:240px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:6px;box-shadow:0 18px 40px rgba(0,0,0,.12);opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .15s,transform .15s}
+.dd.open .dd-menu{opacity:1;transform:none;pointer-events:auto}
+.dd-item{padding:10px 12px;border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.dd-item:hover{background:var(--sand-2)}
+.dd-item small{display:block;color:var(--muted);font-size:11.5px;font-weight:400;margin-top:2px}
+.dd-item.sel{font-weight:600}.dd-item.sel:after{content:"✓";color:var(--orange)}
+/* hero */
+.hero{padding:44px 0 8px}
+h1{font-size:clamp(28px,4.4vw,48px);line-height:1.08;letter-spacing:-.03em;font-weight:600;margin:0 0 18px;max-width:900px}
+.rule{height:6px;border-radius:999px;background:var(--grad);width:min(320px,60%)}
+.lede{color:var(--ink-2);font-size:15px;line-height:1.6;max-width:760px;margin:18px 0 0}
+.note{color:var(--muted);font-size:12px;margin-top:8px}
+/* kpis */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin:28px 0 8px}
+.kpi{background:var(--sand-2);border-radius:18px;padding:18px 20px}
+.kpi .n{font-size:30px;font-weight:600;letter-spacing:-.02em}
+.kpi .l{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.35}
+/* sections */
+section{margin:44px 0}
+h3{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+h2{font-size:22px;font-weight:600;letter-spacing:-.02em;margin:0 0 6px}
+.sub{color:var(--ink-2);font-size:13.5px;line-height:1.55;margin:0 0 18px;max-width:780px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+/* stacked bars */
+.sbar-row{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center;margin:12px 0}
+.sbar-row .nm{font-size:13.5px;font-weight:600}
+.sbar-row .nm small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+.sbar{display:flex;height:30px;border-radius:10px;overflow:hidden;background:var(--sand-2)}
+.sbar div{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#121212;min-width:0;overflow:hidden;white-space:nowrap;border-right:2px solid var(--panel)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted);margin-top:14px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+/* price ladder */
+.ladder{position:relative;height:46px;margin:6px 0}
+.ladder .track{position:absolute;left:0;right:0;top:20px;height:6px;border-radius:999px;background:var(--sand-2)}
+.ladder .iqr{position:absolute;top:16px;height:14px;border-radius:999px;background:var(--sand)}
+.ladder .dot{position:absolute;top:13px;width:20px;height:20px;border-radius:50%;border:3px solid var(--panel);transform:translateX(-50%)}
+.ladder .lbl{position:absolute;top:-2px;font-size:10.5px;color:var(--muted);transform:translateX(-50%);white-space:nowrap}
+.axis{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-left:162px}
+/* weekly bars */
+.weeks{display:flex;align-items:flex-end;gap:5px;height:120px;margin-top:14px}
+.weeks div{flex:1;background:var(--ink);border-radius:5px 5px 2px 2px;min-height:2px;position:relative}
+.weeks div span{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);font-size:10px;color:var(--muted);padding-bottom:3px}
+.wk-axis{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:6px}
+.big{font-size:30px;font-weight:600;letter-spacing:-.02em}
+/* tables */
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+td{padding:12px;border-bottom:1px solid var(--line);color:var(--ink-2)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+td b{color:var(--ink);font-weight:600}
+.ref td{background:var(--sand-2)}
+.tag{display:inline-block;font-size:10.5px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);margin-left:6px;vertical-align:1px}
+.meter{display:inline-block;width:70px;height:6px;border-radius:999px;background:var(--sand-2);vertical-align:middle;margin-left:8px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--orange);border-radius:999px}
+/* heat */
+.heat td.h{text-align:center;font-weight:600;color:#121212;border-radius:10px}
+.heat table{border-collapse:separate;border-spacing:4px}
+.heat td{border:0}
+/* pills */
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pills span{font-size:12px;padding:6px 11px;border-radius:999px;background:var(--sand-2);color:var(--ink-2)}
+/* hero product cards */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.pc{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
+.pc:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.08)}
+.rank{position:absolute;top:0;left:16px;background:var(--ink);color:var(--bg);font-size:12px;font-weight:600;padding:6px 10px;border-radius:0 0 8px 8px;z-index:2}
+.pc .strip{background:var(--sand-2);font-size:12px;color:var(--ink-2);padding:10px 16px;text-align:right}
+.pc .meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:12px 16px 0}
+.pc .meta .live:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--live);margin-right:6px}
+.pc .t{font-weight:600;font-size:14px;padding:8px 16px 0;line-height:1.4;min-height:48px}
+.pc .img{margin:12px 16px;border-radius:12px;overflow:hidden;background:var(--sand-2);aspect-ratio:1/1}
+.pc .img img{width:100%;height:100%;object-fit:cover;display:block}
+.pc .foot{margin:0 16px;background:var(--sand-2);border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pc .foot .d{font-size:11px;color:var(--muted)}
+.pc .foot .p{font-weight:600;font-size:15px}
+.pc .foot .p s{color:var(--muted);font-weight:400;font-size:12px;margin-left:6px}
+.off{font-size:12px;font-weight:600;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 10px;white-space:nowrap}
+.pc .act{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;padding:12px 16px 16px;margin-top:auto}
+.btn{display:inline-flex;justify-content:center;align-items:center;border-radius:999px;padding:10px 14px;font-weight:600;font-size:13px;text-decoration:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-family:inherit;cursor:pointer}
+.btn.dark{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+/* reads */
+.read{background:var(--sand-2);border-radius:14px;padding:16px 18px;border-left:4px solid var(--orange)}
+.read h4{margin:0 0 8px;font-size:15px;font-weight:600}
+.read ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:13.5px;line-height:1.6}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tabs button{border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 14px;font:600 13px Sora,sans-serif;cursor:pointer}
+.tabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+/* ads x shelf */
+.flow{display:flex;height:34px;border-radius:10px;overflow:hidden;margin:10px 0 6px}
+.flow div{display:flex;align-items:center;padding:0 10px;font-size:11.5px;font-weight:600;color:#121212;white-space:nowrap;overflow:hidden;border-right:2px solid var(--panel)}
+.trail{margin-top:24px;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:var(--panel);transition:box-shadow .2s}
+.trail:hover{box-shadow:0 14px 34px rgba(0,0,0,.08)}
+.trail-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.trail-head .path{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;flex-wrap:wrap}
+.trail-head .path .chip{background:var(--ink);color:var(--bg);border-radius:999px;padding:5px 12px;font-size:12px}
+.trail-head .path .to{color:var(--orange);font-size:18px}
+.trail-head .path code{font-family:inherit;background:var(--sand-2);border-radius:999px;padding:5px 12px;font-size:12.5px;word-break:break-all}
+.trail-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.t-ad{background:var(--sand-2);padding:22px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:20px;align-content:start}
+.t-shelf{padding:22px}
+.player{position:relative;aspect-ratio:9/14;border-radius:14px;overflow:hidden;background:#121212;cursor:pointer}
+.player video,.player img{width:100%;height:100%;object-fit:cover;display:block}
+.player .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.player .play i{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.player .play i:after{content:"";border-left:16px solid #121212;border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:4px}
+.player .cap{position:absolute;left:8px;right:8px;bottom:8px;background:rgba(18,18,18,.72);color:#fff;font-size:11px;border-radius:10px;padding:6px 9px;backdrop-filter:blur(4px)}
+.player .cap b{display:block;font-size:12px}
+.player.playing .play,.player.playing .cap{display:none}
+.vstrip{display:flex;gap:6px;margin-top:8px}
+.vstrip button{flex:1;padding:0;border:2px solid transparent;border-radius:9px;overflow:hidden;cursor:pointer;background:#121212;aspect-ratio:9/12}
+.vstrip button img{width:100%;height:100%;object-fit:cover;display:block;opacity:.7}
+.vstrip button.on{border-color:var(--orange)}.vstrip button.on img{opacity:1}
+.t-info h4{margin:2px 0 4px;font-size:22px;font-weight:600;letter-spacing:-.02em}
+.t-info .lead{font-size:13px;color:var(--muted);margin-bottom:14px}
+.ttabs{display:flex;gap:6px;margin:14px 0 8px}
+.ttabs button{border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink-2);padding:6px 12px;font:600 12px Sora,sans-serif;cursor:pointer}
+.ttabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tbox{background:var(--panel);border-radius:14px;padding:10px 12px;max-height:190px;overflow:auto;font-size:12.5px;line-height:1.55;color:var(--ink-2)}
+.tbox .seg{display:grid;grid-template-columns:38px 1fr;gap:6px;padding:3px 0}
+.tbox .seg button{font:500 11px Sora,sans-serif;color:var(--muted);background:none;border:0;padding:0;text-align:left;cursor:pointer}
+.tbox .seg button:hover{color:var(--ink)}
+.tbox mark{background:var(--yellow);color:#121212;border-radius:4px;padding:0 3px;font-weight:600}
+.tbox.copytxt{white-space:pre-line}
+.talk{margin-top:12px}
+.talk .plabel:before{background:var(--yellow)}
+.talk .why{font-size:11px;color:var(--muted);margin-top:6px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kv div{background:var(--panel);border-radius:14px;padding:12px 14px}
+.t-shelf .kv div{background:var(--sand-2)}
+.kv b{display:block;font-size:20px;font-weight:600;letter-spacing:-.02em}
+.kv span{font-size:11.5px;color:var(--muted);line-height:1.35;display:block;margin-top:2px}
+.creators{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
+.creators span{font-size:11px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:var(--ink-2)}
+.prods{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px}
+.prods a{text-decoration:none;display:block}
+.prods img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;background:var(--sand-2);display:block}
+.prods small{display:block;font-size:10.5px;color:var(--muted);margin-top:5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.prods b{font-size:12px}
+.plabel{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:18px 0 6px;display:flex;align-items:center;gap:6px}
+.plabel:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--live)}
+.plabel.out:before{background:var(--orange)}
+.dots{border-top:1px solid var(--line);padding:16px 22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.dots p{margin:0;font-size:13px;line-height:1.5;color:var(--ink-2);background:var(--sand-2);border-radius:14px;padding:12px 14px 12px 40px;position:relative}
+.dots p:before{content:attr(data-n);position:absolute;left:12px;top:12px;width:20px;height:20px;border-radius:50%;background:var(--orange);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.dots p b{color:var(--ink)}
+.empty{background:var(--sand-2);border-radius:14px;padding:16px;font-size:13px;color:var(--ink-2);line-height:1.5}
+@media (max-width:1024px){.trail-body{grid-template-columns:1fr}}
+@media (max-width:620px){.t-ad{grid-template-columns:1fr}.player{max-width:260px}.prods{grid-template-columns:repeat(2,1fr)}}
+footer{color:var(--muted);font-size:12px;line-height:1.6;padding:30px 0 50px;border-top:1px solid var(--line);margin-top:60px}
+@media (max-width:1024px){.kpis{grid-template-columns:repeat(3,1fr)}.pgrid,.grid3{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+@media (max-width:620px){.kpis{grid-template-columns:1fr 1fr}.pgrid,.grid3{grid-template-columns:1fr}.sbar-row{grid-template-columns:1fr}.axis{margin-left:0}.logo span{display:none}.dd-btn{min-width:150px}.tscroll{overflow-x:auto}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="logo"><b>Schbang</b><span>× Shopify insights</span><i class="pill-grad"></i></div>
+  <div class="right">
+    <div class="dd" id="dd">
+      <button class="dd-btn" id="ddBtn" aria-haspopup="listbox"><small>Competitor</small><strong id="ddVal">All competitors</strong></button>
+      <div class="dd-menu" id="ddMenu" role="listbox"></div>
+    </div>
+    <button class="icon-btn" id="theme" title="Toggle theme">◐</button>
+  </div>
+</div></header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1 id="h1">Silver jewellery · what the competition is running on Shopify</h1>
+    <div class="rule"></div>
+    <p class="lede">A read of the public Shopify storefronts of GIVA, Palmonas and The Amethyst Store, seen through a paid media lens: the prices, offers, launch pace, stock and hero products that every one of their Meta and Google campaigns lands on.</p>
+    <p class="note">Product feeds read 15 Oct 2026. Silvana is shown only as a reference line, using our internal estimates.</p>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <section>
+    <h3>01 · Price architecture</h3>
+    <h2>Where each store's ads can enter the funnel</h2>
+    <p class="sub">The entry price (10th percentile) is the cheapest believable hook a prospecting ad can lead with. The median is where most of the catalog sits once someone clicks.</p>
+    <div class="card"><div id="ladder"></div><div class="axis" id="ladderAxis"></div></div>
+    <div class="card" style="margin-top:20px"><div id="bands"></div><div class="legend" id="bandsLegend"></div></div>
+  </section>
+
+  <section>
+    <h3>02 · Offer pressure</h3>
+    <h2>How much discounting the ads are carrying</h2>
+    <p class="sub">The share of SKUs with a compare-at price, and how deep the cut is. That tells you how far each brand's ads depend on "% off" messaging.</p>
+    <div class="card"><div id="disc"></div><div class="legend" id="discLegend"></div></div>
+    <div class="grid3" id="promoTags" style="margin-top:20px"></div>
+  </section>
+
+  <section>
+    <h3>03 · Catalog freshness</h3>
+    <h2>New SKUs going live: fuel for catalog and DPA ads</h2>
+    <p class="sub">Products created in each of the last 12 weeks. Frequent drops keep Advantage+ catalog ads and "new in" retargeting fresh, while a flat line leaves the same creatives running.</p>
+    <div class="grid3" id="weekly"></div>
+  </section>
+
+  <section>
+    <h3>04 · Ad traffic at risk</h3>
+    <h2>Sold-out share by category</h2>
+    <p class="sub">When a category is out of stock, collection-page and catalog ads pointing at it send paid clicks to products nobody can buy.</p>
+    <div class="grid3" id="soldout"></div>
+  </section>
+
+  <section>
+    <h3>05 · Merchandising signals</h3>
+    <h2>What the product tags say they are pushing</h2>
+    <p class="sub">The share of SKUs carrying each kind of tag. Tags drive collections, filters and catalog product sets, so they show which themes each brand can build ad sets around.</p>
+    <div class="card heat tscroll" id="heat"></div>
+  </section>
+
+  <section>
+    <h3>06 · Side by side</h3>
+    <h2>Landing-page and conversion stack</h2>
+    <p class="sub">What a paid click finds after the ad: depth of range, imagery and checkout tooling.</p>
+    <div class="card tscroll" id="compare"></div>
+  </section>
+
+  <section>
+    <h3>07 · On the shelf now</h3>
+    <h2>Hero products live today</h2>
+    <p class="sub">The latest in-stock products each store tags as bestsellers, or its newest drops where it has no bestseller tag. These are the SKUs most likely to show up in their catalog ads this week.</p>
+    <div class="tabs" id="heroTabs"></div>
+    <div class="pgrid" id="heroes"></div>
+  </section>
+
+  <section>
+    <h3>09 · Ads × shelf</h3>
+    <h2>Following the ad click onto the store</h2>
+    <p class="sub">Every live Meta ad from the creator-ads dashboard, matched to the Shopify collection it lands on. On the left is what the ad is doing. On the right is what that shelf looked like on 15 Oct, compared with our 12 Oct crawl.</p>
+    <div class="tabs" id="linkTabs"></div>
+    <div class="card" id="linkSummary"></div>
+    <div id="trails"></div>
+  </section>
+
+  <section>
+    <h3>10 · The read</h3>
+    <h2>What each competitor's storefront tells us about their paid playbook</h2>
+    <p class="sub" style="margin-bottom:18px">Observations only: what the data shows each competitor doing.</p>
+    <div class="grid3" id="reads"></div>
+  </section>
+
+  <footer>
+    Ads: Meta Ad Library creator ads from the Schbang creator-ads dashboard (data updated 14 Oct 2026). Transcripts: Whisper transcripts from the same repo, matched to ads by Ad Library ID; highlighted words are product terms. Collection shelves were read 15 Oct, and stock is compared with the 12 Oct product feed.<br>
+    Source: public Shopify <code>/products.json</code> feeds, read 15 Oct 2026. GIVA (5,438 SKUs) and Palmonas (10,449 SKUs) are full catalogs. The Amethyst Store is its 250 most recent products out of ~15,670, so its freshness and price figures describe the latest drops, not the whole catalog. Price = the lowest variant price; discount = compare-at against price. Silvana figures are internal estimates and are not scraped.
+  </footer>
+</main>
+
+<script src="data.js"></script>
+<script src="ads_link.js"></script>
+<script>
+const D = window.SHOP;
+const COMP = ["GIVA","Palmonas","The Amethyst Store"];
+const COL = {"GIVA":"#f2552c","Palmonas":"#f0a6d8","The Amethyst Store":"#45c4dc","Silvana":"#a7a39d"};
+const SEQ = ["#dfdad5","#f3e33a","#f0a6d8","#f2552c","#121212"];
+const SEQ_TXT = ["#121212","#121212","#121212","#121212","#ffffff"];
+let sel = "all";
+
+const inr = n => "₹" + Math.round(n).toLocaleString("en-IN");
+const short = n => n>=100000 ? "₹"+(n/100000).toFixed(1).replace(/\.0$/,"")+"L" : n>=1000 ? "₹"+(n/1000).toFixed(n>=10000?0:1).replace(/\.0$/,"")+"k" : "₹"+n;
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shown = () => sel==="all" ? COMP : [sel];
+const sampleTag = b => D[b].sample ? '<small>latest 250 drops</small>' : `<small>${D[b].products.toLocaleString("en-IN")} SKUs</small>`;
+
+/* dropdown */
+const ddMenu = document.getElementById("ddMenu"), dd = document.getElementById("dd");
+function renderMenu(){
+  const opts = [["all","All competitors","3 stores · 16k+ SKUs read"], ...COMP.map(b=>[b,b,D[b].sample?"latest 250 products":D[b].products.toLocaleString("en-IN")+" SKUs"])];
+  ddMenu.innerHTML = opts.map(([v,l,s])=>`<div class="dd-item ${v===sel?"sel":""}" data-v="${esc(v)}"><div>${l}<small>${s}</small></div></div>`).join("");
+}
+document.getElementById("ddBtn").onclick = e => { e.stopPropagation(); dd.classList.toggle("open"); };
+ddMenu.onclick = e => { const it = e.target.closest(".dd-item"); if(!it) return; sel = it.dataset.v; dd.classList.remove("open"); render(); };
+document.addEventListener("click", ()=>dd.classList.remove("open"));
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") dd.classList.remove("open"); });
+const themeKey="si-theme";
+try{ const t=localStorage.getItem(themeKey); if(t) document.documentElement.dataset.theme=t; }catch(e){}
+document.getElementById("theme").onclick = ()=>{ const r=document.documentElement; r.dataset.theme = r.dataset.theme==="dark"?"light":"dark"; try{localStorage.setItem(themeKey,r.dataset.theme)}catch(e){} };
+
+function kpis(){
+  const b = shown();
+  const tot = b.reduce((s,x)=>s+(D[x].catalogTotal||D[x].products),0);
+  const avg = k => b.reduce((s,x)=>s+D[x][k],0)/b.length;
+  const one = b.length===1 ? D[b[0]] : null;
+  const items = [
+    [tot.toLocaleString("en-IN"), one ? "SKUs live on store" : "SKUs live across 3 stores"],
+    [one ? short(one.entry) : b.map(x=>short(D[x].entry)).join(" / "), "Entry price (10th percentile)"],
+    [one ? short(one.median) : b.map(x=>short(D[x].median)).join(" / "), "Median price"],
+    [Math.round(avg("discountedPct"))+"%", one?"SKUs on discount":"SKUs on discount (avg)"],
+    [Math.round(avg("medianDisc"))+"%", one?"Median discount depth":"Median discount depth (avg)"],
+    [Math.round(avg("soldOut"))+"%", one?"SKUs fully sold out":"SKUs fully sold out (avg)"],
+  ];
+  document.getElementById("kpis").innerHTML = items.map(([n,l])=>`<div class="kpi"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
+}
+
+function ladder(){
+  const max = Math.log10(60000), min = Math.log10(500);
+  const x = v => Math.max(0,Math.min(100,(Math.log10(Math.max(v,500))-min)/(max-min)*100));
+  const rows = [...shown(), "Silvana"].map(b=>{
+    const d=D[b], c=COL[b];
+    if(d.estimate) return `<div class="sbar-row"><div class="nm">Silvana<small>reference · estimate</small></div><div class="ladder"><div class="track"></div><div class="dot" style="left:${x(d.median)}%;background:${c}"></div><div class="lbl" style="left:${x(d.median)}%">median ${short(d.median)}</div></div></div>`;
+    return `<div class="sbar-row"><div class="nm">${b}${sampleTag(b)}</div><div class="ladder"><div class="track"></div>
+      <div class="iqr" style="left:${x(d.p25)}%;width:${x(d.p75)-x(d.p25)}%"></div>
+      <div class="dot" style="left:${x(d.entry)}%;background:var(--panel);border-color:${c}"></div><div class="lbl" style="left:${x(d.entry)}%">entry ${short(d.entry)}</div>
+      <div class="dot" style="left:${x(d.median)}%;background:${c}"></div><div class="lbl" style="left:${x(d.median)}%;top:34px">median ${short(d.median)}</div>
+    </div></div>`;
+  }).join("");
+  document.getElementById("ladder").innerHTML = rows;
+  document.getElementById("ladderAxis").innerHTML = [500,1000,2500,5000,15000,60000].map(v=>`<span>${short(v)}</span>`).join("");
+}
+
+function stacked(id, key, legendId, labels){
+  const html = shown().map(b=>{
+    const segs = D[b][key].map((s,i)=>s.pct>0?`<div style="width:${s.pct}%;background:${SEQ[i]};color:${SEQ_TXT[i]}" title="${s.band}: ${s.pct}%">${s.pct>=6?Math.round(s.pct)+"%":""}</div>`:"").join("");
+    return `<div class="sbar-row"><div class="nm">${b}${sampleTag(b)}</div><div class="sbar">${segs}</div></div>`;
+  }).join("");
+  document.getElementById(id).innerHTML = html;
+  document.getElementById(legendId).innerHTML = D.GIVA[key].map((s,i)=>`<span><i style="background:${SEQ[i]}"></i>${s.band}</span>`).join("");
+}
+
+const PROMO = {
+  "GIVA": ["goat_sale","jep","30 days easy return","lifetime_plating","hallmarked jewellery"],
+  "Palmonas": ["min40_070126","flat200_070126","tiered","pricechanged","new_in"],
+  "The Amethyst Store": ["october lights","new arrivals","engagement","anniversary","muhurtham"],
+};
+function promo(){
+  document.getElementById("promoTags").innerHTML = shown().map(b=>{
+    const d=D[b];
+    return `<div class="card"><h3>${b}</h3><div class="big">${d.discountedPct}%</div><div class="note" style="margin:2px 0 14px">of SKUs discounted · median cut ${d.medianDisc}%</div>
+    <div class="pills">${PROMO[b].map(t=>`<span>${esc(t)}</span>`).join("")}</div><div class="note">Promo and merchandising tags seen on the catalog</div></div>`;
+  }).join("");
+}
+
+function weekly(){
+  document.getElementById("weekly").innerHTML = shown().map(b=>{
+    const w=D[b].weekly, m=Math.max(...w,1), sum=w.reduce((a,c)=>a+c,0);
+    return `<div class="card"><h3>${b}</h3><div class="big">${sum.toLocaleString("en-IN")}</div><div class="note" style="margin-top:2px">${D[b].sample?"of the latest 250 products were created in the last 12 weeks":"new SKUs in the last 12 weeks"}</div>
+      <div class="weeks">${w.map(v=>`<div style="height:${v/m*100}%;background:${COL[b]}" title="${v}"><span>${v||""}</span></div>`).join("")}</div>
+      <div class="wk-axis"><span>12 wks ago</span><span>this week</span></div></div>`;
+  }).join("");
+}
+
+function soldout(){
+  document.getElementById("soldout").innerHTML = shown().map(b=>{
+    const d=D[b];
+    return `<div class="card"><h3>${b}</h3><div class="big">${d.soldOut}%</div><div class="note" style="margin:2px 0 12px">of SKUs fully sold out</div>
+      <table><tr><th>Category</th><th class="num">Share</th><th class="num">Sold out</th></tr>
+      ${d.types.slice(0,6).map(t=>`<tr><td>${esc(t.name)}</td><td class="num">${t.share}%</td><td class="num"><b>${t.soldOut}%</b><span class="meter"><i style="width:${Math.min(100,t.soldOut)}%"></i></span></td></tr>`).join("")}
+      </table></div>`;
+  }).join("");
+}
+
+function heat(){
+  const sigs = Object.keys(D.GIVA.signals);
+  const shade = v => v>=60?SEQ[3]:v>=30?SEQ[2]:v>=10?SEQ[1]:v>0?SEQ[0]:"transparent";
+  document.getElementById("heat").innerHTML = `<table><tr><th></th>${sigs.map(s=>`<th style="text-align:center">${s}</th>`).join("")}</tr>
+    ${shown().map(b=>`<tr><td><b>${b}</b></td>${sigs.map(s=>{const v=D[b].signals[s];return `<td class="h" style="background:${shade(v)};${v===0?"color:var(--muted);font-weight:400":""}">${v===0?"—":Math.round(v)+"%"}</td>`}).join("")}</tr>`).join("")}
+  </table>`;
+}
+
+function compare(){
+  const rows = [...shown(),"Silvana"];
+  const r = (b,d)=>`<tr class="${d.estimate?"ref":""}"><td><b>${b}</b>${d.estimate?'<span class="tag">reference · est.</span>':""}</td>
+    <td class="num">${(d.catalogTotal||d.products).toLocaleString("en-IN")}</td><td class="num">${d.collections??"—"}</td>
+    <td class="num">${d.imgs}</td><td class="num">${d.inStock}%</td><td>${(d.checkout||[]).map(c=>`<span class="tag" style="margin:2px 4px 2px 0">${esc(c)}</span>`).join("")}</td></tr>`;
+  document.getElementById("compare").innerHTML = `<table><tr><th>Store</th><th class="num">SKUs</th><th class="num">Collections</th><th class="num">Images / PDP</th><th class="num">In stock</th><th>Checkout &amp; CRO stack</th></tr>${rows.map(b=>r(b,D[b])).join("")}</table>`;
+}
+
+let heroBrand = "GIVA";
+function heroes(){
+  if(sel!=="all") heroBrand = sel;
+  document.getElementById("heroTabs").innerHTML = sel==="all" ? COMP.map(b=>`<button class="${b===heroBrand?"on":""}" data-b="${esc(b)}">${b}</button>`).join("") : "";
+  document.querySelectorAll("#heroTabs button").forEach(x=>x.onclick=()=>{heroBrand=x.dataset.b;heroes();});
+  const fmt = s => new Date(s).toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+  document.getElementById("heroes").innerHTML = D[heroBrand].heroes.map((h,i)=>`
+    <article class="pc"><div class="rank">#${i+1}</div>
+      <div class="strip">${esc(h.type)} · ${heroBrand}</div>
+      <div class="meta"><span class="live">In stock</span><span>Published ${fmt(h.published)}</span></div>
+      <div class="t">${esc(h.title)}</div>
+      <div class="img"><img loading="lazy" src="${esc(h.img)}&width=600" alt=""></div>
+      <div class="foot"><div><div class="d">${esc(new URL(h.url).hostname)}</div><div class="p">${inr(h.price)}${h.cap>h.price?`<s>${inr(h.cap)}</s>`:""}</div></div>${h.disc>0?`<span class="off">${Math.round(h.disc)}% off</span>`:`<span class="off">Full price</span>`}</div>
+      <div class="act"><a class="btn" href="${esc(D[heroBrand].url)}" target="_blank" rel="noopener">Store</a><a class="btn dark" href="${esc(h.url)}" target="_blank" rel="noopener">View PDP ↗</a></div>
+    </article>`).join("");
+}
+
+const READS = {
+  "GIVA": [
+    "Discounting is permanent: 99.9% of SKUs carry a compare-at price and 72% sit 40–60% off. Ads run on \"% off\" as a constant, not a sale moment.",
+    "Wide entry ladder: ₹1.3k entry, ₹3.5k median, with ~36% of the catalog under ₹2.5k. That makes cheap impulse and gifting hooks easy.",
+    "Near-zero stock leakage (0.5% sold out), so catalog ads rarely land on dead SKUs. Gifting tags cover 49% of products, which feeds gifting audiences.",
+    "Few new creates (≈97 in 12 weeks). Freshness comes from re-publishing and sub-brands (IXIA, Heer), not new SKU volume.",
+  ],
+  "Palmonas": [
+    "Highest-volume launcher: ≈1,550 new SKUs in 12 weeks, with spikes of 375 and 629 in single weeks. That's built for always-on catalog and \"new in\" ads.",
+    "Price-led hooks: 54% of SKUs under ₹2.5k and promo mechanics coded into tags (min40, flat200, tiered), so offers can be switched by product set.",
+    "Big leak: 46% of SKUs are fully sold out, and 43–53% of every core category. Broad catalog and collection traffic hits a lot of unbuyable PDPs.",
+    "28% of SKUs carry festive tags, with Karwa Chauth mangalsutras as a clear occasion push.",
+  ],
+  "The Amethyst Store": [
+    "No discounting at all: 0% of SKUs have a compare-at price. Ads sell craft, occasion and heritage, not price.",
+    "Premium ticket: the latest drops sit at a ₹28k median, with 90% above ₹15k. Fewer, higher-value conversions per click.",
+    "Festive is the story: 92% of recent drops are tagged \"October Lights\" and 60% engagement, anniversary or muhurtham, all occasion-led.",
+    "Thin PDP visuals (≈2.2 images per product). Ad creative has to carry most of the persuasion before the click.",
+  ],
+};
+function reads(){
+  document.getElementById("reads").innerHTML = shown().map(b=>`<div class="read"><h4>${b}</h4><ul>${READS[b].map(r=>`<li>${r}</li>`).join("")}</ul></div>`).join("");
+}
+
+const L = window.LINK || {};
+let linkBrand = "Palmonas";
+const KCOL = {collection:"#f2552c", store:"#45c4dc", page:"#f0a6d8", home:"#f3e33a"};
+const KLAB = {collection:"Collection pages", store:"Store visits / maps", page:"Content pages", home:"Homepage / none"};
+const dmy = s => new Date(s).toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+function dotsFor(r, b){
+  const out = [];
+  if(r.kind==="store") out.push(`<b>${r.ads} of ${L[b].total} ads</b> skip the website and send people to a showroom map or store page, so they are built for footfall, not checkout.`);
+  if(r.restocked>=5) out.push(`<b>${r.restocked} products on this shelf were out of stock on 12 Oct and in stock on 15 Oct</b>, so the collection the ads point at was refilled.`);
+  if(r.products && r.discPct>=90) out.push(`Every product on this shelf carries a markdown (<b>median ${r.medianDisc}% off</b>, ${short(r.median)} median price), so the click lands on an offer page.`);
+  if(r.products && r.discPct<5) out.push(`<b>Full-price shelf</b> (${short(r.median)} median, ${r.discPct}% discounted), so the ad sells on creator and brand, not price.`);
+  if(r.products && r.newSinceAd>=50) out.push(`<b>${r.newSinceAd.toLocaleString("en-IN")} new products</b> have been added since the first ad went live (${dmy(r.first)}), so the shelf keeps refreshing under the same creative.`);
+  if(r.products && r.soldOut>0) out.push(`<b>${r.soldOut} product${r.soldOut>1?"s are":" is"} showing sold out</b> on the landing page right now (${r.soldOutPct}%).`);
+  if(r.label==="all-1") out.push(`Lands on the <b>entire catalog</b> (${r.products.toLocaleString("en-IN")} products), a broad "shop everything" click rather than a curated edit.`);
+  return out;
+}
+function links(){
+  if(sel!=="all") linkBrand = sel;
+  document.getElementById("linkTabs").innerHTML = sel==="all" ? COMP.map(b=>`<button class="${b===linkBrand?"on":""}" data-b="${esc(b)}">${b}</button>`).join("") : "";
+  document.querySelectorAll("#linkTabs button").forEach(x=>x.onclick=()=>{linkBrand=x.dataset.b;links();});
+  const d = L[linkBrand]; if(!d){ document.getElementById("trails").innerHTML=""; return; }
+  const segs = Object.entries(d.share).filter(([,v])=>v>0);
+  document.getElementById("linkSummary").innerHTML = `<h3>Where ${linkBrand}'s ${d.total} live ads send people</h3>
+    <div class="flow">${segs.map(([k,v])=>`<div style="width:${v/d.total*100}%;background:${KCOL[k]}" title="${KLAB[k]}: ${v}">${v/d.total>.15?KLAB[k]+" · "+v:v}</div>`).join("")}</div>
+    <div class="legend">${segs.map(([k,v])=>`<span><i style="background:${KCOL[k]}"></i>${KLAB[k]} (${v})</span>`).join("")}</div>`;
+  const prods = (arr,lab,cls) => arr && arr.length ? `<div class="plabel ${cls||""}">${lab}</div><div class="prods">${arr.map(p=>`<a href="${esc(p.url)}" target="_blank" rel="noopener" title="${esc(p.t)}"><img loading="lazy" src="${esc(p.img)}&width=240" alt=""><small>${esc(p.t)}</small><b>${inr(p.p)}</b></a>`).join("")}</div>` : "";
+  const rows = d.rows.filter(r=>r.kind!=="home");
+  document.getElementById("trails").innerHTML = rows.map((r,ri)=>{
+    const dots = dotsFor(r, linkBrand), v0 = r.videos[0] || {};
+    const dest = r.kind==="collection" ? "/collections/"+esc(r.label) : esc(r.label);
+    const shelf = r.products ? `<div class="kv">
+        <div><b>${r.products.toLocaleString("en-IN")}</b><span>products in this collection today</span></div>
+        <div><b>${short(r.median)}</b><span>typical (median) price</span></div>
+        <div><b>${r.discPct}%</b><span>of products on discount, typically ${r.medianDisc}% off</span></div>
+        <div><b>${r.restocked||0}</b><span>were out of stock on 12 Oct, in stock today</span></div></div>
+        ${prods(r.restockSamples,"Back in stock since 12 Oct")}${prods(r.soldOutSamples,"Sold out on the landing page now","out")}`
+      : `<div class="empty">${r.kind==="store"?"Offline destination: Google Maps pins and the showroom page. The ad is driving footfall, so there is no Shopify shelf to measure.":"Content page with no product shelf to measure."}</div>`;
+    return `<article class="trail">
+      <div class="trail-head"><div class="path"><span class="chip">${r.ads} live ad${r.ads>1?"s":""}</span><span class="to">→</span><code>${dest}</code></div>
+        <span class="note" style="margin:0">${r.adRows>r.ads?r.adRows+" placements · ":""}first live ${dmy(r.first)}</span></div>
+      <div class="trail-body">
+        <div class="t-ad">
+          <div>
+            <div class="player" data-r="${ri}" data-i="0">${playerInner(v0)}</div>
+            ${r.videos.length>1?`<div class="vstrip">${r.videos.map((v,i)=>`<button class="${i?"":"on"}" data-r="${ri}" data-i="${i}" title="${esc(v.creator)}"><img loading="lazy" src="${esc(v.poster||"")}" alt=""></button>`).join("")}</div>`:""}
+          </div>
+          <div class="t-info">${infoInner(v0, r)}</div>
+        </div>
+        <div class="t-shelf"><h3>The shelf it lands on</h3><h4 style="margin:2px 0 14px;font-size:22px;font-weight:600;letter-spacing:-.02em;word-break:break-all">${dest}</h4>${shelf}</div>
+      </div>
+      ${dots.length?`<div class="dots">${dots.map((x,i)=>`<p data-n="${i+1}">${x}</p>`).join("")}</div>`:""}
+    </article>`;
+  }).join("");
+  const trails = document.getElementById("trails");
+  trails.onclick = e => {
+    const b = e.target.closest(".vstrip button");
+    if(b){ const v = rows[b.dataset.r].videos[b.dataset.i], art = b.closest(".trail");
+      art.querySelectorAll(".vstrip button").forEach(x=>x.classList.toggle("on", x===b));
+      const pl = art.querySelector(".player"); pl.classList.remove("playing"); pl.innerHTML = playerInner(v);
+      art.querySelector(".t-info").innerHTML = infoInner(v, rows[b.dataset.r]);
+      playIn(pl); return; }
+    const tt = e.target.closest(".ttabs button");
+    if(tt){ const box = tt.closest(".t-info");
+      box.querySelectorAll(".ttabs button").forEach(x=>x.classList.toggle("on", x===tt));
+      box.querySelectorAll(".tbox").forEach(x=>x.hidden = x.dataset.t!==tt.dataset.t); return; }
+    const ts = e.target.closest(".seg button");
+    if(ts){ const art = ts.closest(".trail"), pl = art.querySelector(".player");
+      if(!pl.classList.contains("playing")) playIn(pl);
+      const vid = pl.querySelector("video"); if(vid){ vid.currentTime = +ts.dataset.s; vid.play(); } return; }
+    const pl = e.target.closest(".player");
+    if(pl && !pl.classList.contains("playing")) playIn(pl);
+  };
+}
+function hl(text, terms){
+  let s = esc(text);
+  (terms||[]).slice().sort((a,b)=>b.length-a.length).forEach(t=>{
+    s = s.replace(new RegExp(`\\b(${t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}s?)\\b(?![^<]*>)`,"gi"), "<mark>$1</mark>");
+  });
+  return s;
+}
+function infoInner(v, r){
+  const mm = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+  const hasT = v.segs && v.segs.length;
+  const prods = v.products || [];
+  const line = prods.length && prods[0].line;
+  return `<h3>The ad</h3><h4>${esc(v.creator||"Creator ad")}</h4><div class="lead">with ${linkBrand} · ${v.days||0}d running${v.lang&&v.lang!=="en"?" · "+esc(v.lang):""}</div>
+    <div class="kv"><div><b>${dmy(r.first)}</b><span>first live</span></div><div><b>${r.maxDays}d</b><span>longest running</span></div></div>
+    <div class="ttabs">${hasT?`<button class="on" data-t="tr">Transcript</button>`:""}${v.copy?`<button class="${hasT?"":"on"}" data-t="cp">Ad copy</button>`:""}</div>
+    ${hasT?`<div class="tbox" data-t="tr">${v.segs.map(s=>`<div class="seg"><button data-s="${s.s}" title="Jump to ${mm(s.s)}">${mm(s.s)}</button><span>${hl(s.x, v.terms)}</span></div>`).join("")}</div>`:""}
+    ${v.copy?`<div class="tbox copytxt" data-t="cp" ${hasT?"hidden":""}>${hl(v.copy, v.terms)}</div>`:""}
+    ${!hasT&&!v.copy?`<div class="empty" style="margin-top:12px">No speech or copy on this ad; it is visual only.</div>`:""}
+    ${prods.length?`<div class="talk"><div class="plabel">${line?"The line being talked about, on the shelf":"Product being talked about, on the shelf"}</div>
+      <div class="prods">${prods.map(p=>`<a href="${esc(p.url)}" target="_blank" rel="noopener" title="${esc(p.t)}"><img loading="lazy" src="${esc(p.img)}&width=240" alt=""><small>${esc(p.t)}</small><b>${inr(p.p)}</b></a>`).join("")}</div>
+      <div class="why">${line?`The transcript names the ${esc(prods[0].on.join(" "))} line; these are in-stock products from it on the landing page.`:`Closest products on the landing page whose titles match what's said: ${esc(prods[0].on.join(", "))}.`}</div></div>`
+    : (v.terms&&v.terms.length?`<div class="why" style="margin-top:10px;font-size:11px;color:var(--muted)">Mentions ${v.terms.map(esc).join(", ")}, but no single product on the landing page can be pinned to it.</div>`:"")}
+    <div class="creators">${r.creators.slice(0,8).map(c=>`<span>${esc(c)}</span>`).join("")}${r.creators.length>8?`<span>+${r.creators.length-8}</span>`:""}</div>`;
+}
+function playerInner(v){
+  return `<img src="${esc(v.poster||"")}" alt=""><div class="play"><i></i></div><div class="cap"><b>${esc(v.creator||"")}</b>${v.media?"Tap to play":"Image ad"}</div>`;
+}
+function playIn(pl){
+  const card = pl.closest(".trail"), on = card.querySelector(".vstrip button.on");
+  const r = L[linkBrand].rows.filter(x=>x.kind!=="home")[pl.dataset.r], v = r.videos[on?on.dataset.i:0];
+  if(!v || !v.media) return;
+  document.querySelectorAll(".player.playing video").forEach(x=>x.pause());
+  pl.classList.add("playing");
+  pl.innerHTML = `<video src="${esc(v.media)}" poster="${esc(v.poster||"")}" controls autoplay playsinline></video>`;
+}
+
+function render(){
+  document.getElementById("ddVal").textContent = sel==="all" ? "All competitors" : sel;
+  document.getElementById("h1").textContent = sel==="all" ? "Silver jewellery · what the competition is running on Shopify" : `${sel} · what's running on their Shopify store`;
+  renderMenu(); kpis(); ladder(); stacked("bands","bands","bandsLegend"); stacked("disc","discBands","discLegend");
+  promo(); weekly(); soldout(); heat(); compare(); heroes(); links(); reads();
+}
+render();
+</script>
+</body>
+</html>
