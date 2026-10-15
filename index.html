@@ -215,59 +215,7 @@ footer{color:var(--muted);font-size:12px;line-height:1.6;padding:30px 0 50px;bor
   <div class="kpis" id="kpis"></div>
 
   <section>
-    <h3>01 · Price architecture</h3>
-    <h2>Where each store's ads can enter the funnel</h2>
-    <p class="sub">The entry price (10th percentile) is the cheapest believable hook a prospecting ad can lead with. The median is where most of the catalog sits once someone clicks.</p>
-    <div class="card"><div id="ladder"></div><div class="axis" id="ladderAxis"></div></div>
-    <div class="card" style="margin-top:20px"><div id="bands"></div><div class="legend" id="bandsLegend"></div></div>
-  </section>
-
-  <section>
-    <h3>02 · Offer pressure</h3>
-    <h2>How much discounting the ads are carrying</h2>
-    <p class="sub">The share of SKUs with a compare-at price, and how deep the cut is. That tells you how far each brand's ads depend on "% off" messaging.</p>
-    <div class="card"><div id="disc"></div><div class="legend" id="discLegend"></div></div>
-    <div class="grid3" id="promoTags" style="margin-top:20px"></div>
-  </section>
-
-  <section>
-    <h3>03 · Catalog freshness</h3>
-    <h2>New SKUs going live: fuel for catalog and DPA ads</h2>
-    <p class="sub">Products created in each of the last 12 weeks. Frequent drops keep Advantage+ catalog ads and "new in" retargeting fresh, while a flat line leaves the same creatives running.</p>
-    <div class="grid3" id="weekly"></div>
-  </section>
-
-  <section>
-    <h3>04 · Ad traffic at risk</h3>
-    <h2>Sold-out share by category</h2>
-    <p class="sub">When a category is out of stock, collection-page and catalog ads pointing at it send paid clicks to products nobody can buy.</p>
-    <div class="grid3" id="soldout"></div>
-  </section>
-
-  <section>
-    <h3>05 · Merchandising signals</h3>
-    <h2>What the product tags say they are pushing</h2>
-    <p class="sub">The share of SKUs carrying each kind of tag. Tags drive collections, filters and catalog product sets, so they show which themes each brand can build ad sets around.</p>
-    <div class="card heat tscroll" id="heat"></div>
-  </section>
-
-  <section>
-    <h3>06 · Side by side</h3>
-    <h2>Landing-page and conversion stack</h2>
-    <p class="sub">What a paid click finds after the ad: depth of range, imagery and checkout tooling.</p>
-    <div class="card tscroll" id="compare"></div>
-  </section>
-
-  <section>
-    <h3>07 · On the shelf now</h3>
-    <h2>Hero products live today</h2>
-    <p class="sub">The latest in-stock products each store tags as bestsellers, or its newest drops where it has no bestseller tag. These are the SKUs most likely to show up in their catalog ads this week.</p>
-    <div class="tabs" id="heroTabs"></div>
-    <div class="pgrid" id="heroes"></div>
-  </section>
-
-  <section>
-    <h3>09 · Ads × shelf</h3>
+    <h3>01 · Ads × shelf</h3>
     <h2>Following the ad click onto the store</h2>
     <p class="sub">Every live Meta ad from the creator-ads dashboard, matched to the Shopify collection it lands on. On the left is what the ad is doing. On the right is what that shelf looked like on 15 Oct, compared with our 12 Oct crawl.</p>
     <div class="tabs" id="linkTabs"></div>
@@ -276,7 +224,59 @@ footer{color:var(--muted);font-size:12px;line-height:1.6;padding:30px 0 50px;bor
   </section>
 
   <section>
-    <h3>10 · The read</h3>
+    <h3>02 · Price architecture</h3>
+    <h2>Where each store's ads can enter the funnel</h2>
+    <p class="sub">The entry price (10th percentile) is the cheapest believable hook a prospecting ad can lead with. The median is where most of the catalog sits once someone clicks.</p>
+    <div class="card"><div id="ladder"></div><div class="axis" id="ladderAxis"></div></div>
+    <div class="card" style="margin-top:20px"><div id="bands"></div><div class="legend" id="bandsLegend"></div></div>
+  </section>
+
+  <section>
+    <h3>03 · Offer pressure</h3>
+    <h2>How much discounting the ads are carrying</h2>
+    <p class="sub">The share of SKUs with a compare-at price, and how deep the cut is. That tells you how far each brand's ads depend on "% off" messaging.</p>
+    <div class="card"><div id="disc"></div><div class="legend" id="discLegend"></div></div>
+    <div class="grid3" id="promoTags" style="margin-top:20px"></div>
+  </section>
+
+  <section>
+    <h3>04 · Catalog freshness</h3>
+    <h2>New SKUs going live: fuel for catalog and DPA ads</h2>
+    <p class="sub">Products created in each of the last 12 weeks. Frequent drops keep Advantage+ catalog ads and "new in" retargeting fresh, while a flat line leaves the same creatives running.</p>
+    <div class="grid3" id="weekly"></div>
+  </section>
+
+  <section>
+    <h3>05 · Ad traffic at risk</h3>
+    <h2>Sold-out share by category</h2>
+    <p class="sub">When a category is out of stock, collection-page and catalog ads pointing at it send paid clicks to products nobody can buy.</p>
+    <div class="grid3" id="soldout"></div>
+  </section>
+
+  <section>
+    <h3>06 · Merchandising signals</h3>
+    <h2>What the product tags say they are pushing</h2>
+    <p class="sub">The share of SKUs carrying each kind of tag. Tags drive collections, filters and catalog product sets, so they show which themes each brand can build ad sets around.</p>
+    <div class="card heat tscroll" id="heat"></div>
+  </section>
+
+  <section>
+    <h3>07 · Side by side</h3>
+    <h2>Landing-page and conversion stack</h2>
+    <p class="sub">What a paid click finds after the ad: depth of range, imagery and checkout tooling.</p>
+    <div class="card tscroll" id="compare"></div>
+  </section>
+
+  <section>
+    <h3>08 · On the shelf now</h3>
+    <h2>Hero products live today</h2>
+    <p class="sub">The latest in-stock products each store tags as bestsellers, or its newest drops where it has no bestseller tag. These are the SKUs most likely to show up in their catalog ads this week.</p>
+    <div class="tabs" id="heroTabs"></div>
+    <div class="pgrid" id="heroes"></div>
+  </section>
+
+  <section>
+    <h3>09 · The read</h3>
     <h2>What each competitor's storefront tells us about their paid playbook</h2>
     <p class="sub" style="margin-bottom:18px">Observations only: what the data shows each competitor doing.</p>
     <div class="grid3" id="reads"></div>
